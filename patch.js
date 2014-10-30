@@ -1,4 +1,4 @@
-var isArray = require("x-is-array")
+var isArray = Array.isArray
 
 var domIndex = require("./dom-index")
 var patchOp = require("./patch-op")

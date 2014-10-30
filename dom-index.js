@@ -4,6 +4,7 @@
 // We only recurse into a DOM node if we know that it contains a child of
 // interest.
 
+var nodeCount = require("vtree/interface").nodeCount
 var noChild = {}
 
 module.exports = domIndex
@@ -36,7 +37,7 @@ function recurse(rootNode, tree, indices, nodes, rootIndex) {
                 rootIndex += 1
 
                 var vChild = vChildren[i] || noChild
-                var nextIndex = rootIndex + (vChild.count || 0)
+                var nextIndex = rootIndex + (vChild[nodeCount] || 0)
 
                 // skip recursion down the tree if there are no nodes down here
                 if (indexInRange(indices, rootIndex, nextIndex)) {

@@ -1,5 +1,9 @@
-var isObject = require("is-object")
 var isHook = require("vtree/is-vhook")
+var runHook = require("vtree/interface").runHook
+
+var isObject = function(x) {
+  return x && typeof(x) === "object"
+}
 
 module.exports = applyProperties
 
@@ -10,7 +14,7 @@ function applyProperties(node, props, previous) {
         if (propValue === undefined) {
             removeProperty(node, props, previous, propName);
         } else if (isHook(propValue)) {
-            propValue.hook(node,
+            propValue[runHook](node,
                 propName,
                 previous ? previous[propName] : undefined)
         } else {

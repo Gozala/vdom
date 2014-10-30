@@ -2,29 +2,37 @@ var test = require("tape")
 var VNode = require("vtree/vnode")
 var VText = require("vtree/vtext")
 var diff = require("vtree/diff")
+var isThunk = require("vtree/interface").isThunk
+var renderThunk = require("vtree/interface").renderThunk
+var thunkCache = require("vtree/interface").thunkCache
 var document = require("global/document")
 
 var createElement = require("../create-element")
 var patch = require("../patch")
+var makeThunk = function(descriptor) {
+  var thunk = {}
+  thunk[isThunk] = true
+  thunk[renderThunk] = descriptor.render
+  thunk[thunkCache] = descriptor.vnode
+  return thunk
+}
 
 test("indexing over thunk root", function (assert) {
-    var leftThunk = {
-        type: "Thunk",
+    var leftThunk = makeThunk({
         render: function () {
             return new VNode("div", {
                 className:"test"
             }, [new VText("Left")])
         }
-    }
+    })
 
-    var rightThunk = {
-        type: "Thunk",
+    var rightThunk = makeThunk({
         render: function () {
             return new VNode("div", {
                 className: "test"
             }, [new VText("Right")])
         }
-    }
+    })
 
     var root = createElement(leftThunk, { document: document })
     var patches = diff(leftThunk, rightThunk)
@@ -40,14 +48,13 @@ test("indexing over thunk child", function (assert) {
     }, [
         new VNode("div"),
         new VText("test"),
-        {
-            type: "Thunk",
+        makeThunk({
             render: function () {
                 return new VNode("div", {
                     className:"test"
                 }, [new VText("Left")])
             }
-        },
+        }),
         new VNode("div"),
         new VText("test")
     ])
@@ -57,14 +64,13 @@ test("indexing over thunk child", function (assert) {
     }, [
         new VNode("div"),
         new VText("test"),
-        {
-            type: "Thunk",
+        makeThunk({
             render: function () {
                 return new VNode("div", {
                     className:"test"
                 }, [new VText("Right")])
             }
-        },
+        }),
         new VNode("div"),
         new VText("test")
     ])

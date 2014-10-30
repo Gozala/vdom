@@ -4,6 +4,7 @@ var isVNode = require("vtree/is-vnode")
 var isVText = require("vtree/is-vtext")
 var isWidget = require("vtree/is-widget")
 var handleThunk = require("vtree/handle-thunk")
+var initWidget = require("vtree/interface").initWidget
 
 module.exports = createElement
 
@@ -14,7 +15,7 @@ function createElement(vnode, opts) {
     vnode = handleThunk(vnode).a
 
     if (isWidget(vnode)) {
-        return vnode.init()
+        return vnode[initWidget]()
     } else if (isVText(vnode)) {
         return doc.createTextNode(vnode.text)
     } else if (!isVNode(vnode)) {

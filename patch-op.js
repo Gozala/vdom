@@ -2,9 +2,13 @@ var applyProperties = require("./apply-properties")
 
 var isWidget = require("vtree/is-widget")
 var VPatch = require("vtree/vpatch")
+var update = require("vtree/interface").updateWidget
+var destroy = require("vtree/interface").destroyWidget
+
 
 var render = require("./create-element")
 var updateWidget = require("./update-widget")
+
 
 module.exports = applyPatch
 
@@ -82,7 +86,7 @@ function stringPatch(domNode, leftVNode, vText, renderOptions) {
 
 function widgetPatch(domNode, leftVNode, widget, renderOptions) {
     if (updateWidget(leftVNode, widget)) {
-        return widget.update(leftVNode, domNode) || domNode
+        return widget[update](leftVNode, domNode) || domNode
     }
 
     var parentNode = domNode.parentNode
@@ -111,8 +115,8 @@ function vNodePatch(domNode, leftVNode, vNode, renderOptions) {
 }
 
 function destroyWidget(domNode, w) {
-    if (typeof w.destroy === "function" && isWidget(w)) {
-        w.destroy(domNode)
+    if (typeof w[destroy] === "function" && isWidget(w)) {
+        w[destroy](domNode)
     }
 }
 
